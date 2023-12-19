@@ -1,0 +1,22 @@
+#!/bin/sh
+
+case "$1" in
+    start)
+        printf "Starting Alsa: "
+	alsactl -U init 0
+        echo "done"
+        ;;
+    stop)
+	echo "Stopping Alsa"
+        ;;
+    restart)
+	$0 stop
+	$0 start
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart}"
+        exit 1
+        ;;
+esac
+
+exit 0
