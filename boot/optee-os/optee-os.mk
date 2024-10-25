@@ -30,6 +30,10 @@ endif
 
 OPTEE_OS_DEPENDENCIES = host-openssl host-python3 host-python-pyelftools
 
+ifeq ($(BR2_TARGET_OPTEE_OS_NEEDS_CMAKE),y)
+OPTEE_OS_DEPENDENCIES += $(BR2_CMAKE_HOST_DEPENDENCY)
+endif
+
 ifeq ($(BR2_TARGET_OPTEE_OS_NEEDS_PYTHON_CRYPTOGRAPHY),y)
 OPTEE_OS_DEPENDENCIES += host-python-cryptography
 else
@@ -61,7 +65,7 @@ OPTEE_OS_MAKE_OPTS += \
 	CFG_ARM32_core=y
 endif
 
-# Get mandatory PLAFORM and optional PLATFORM_FLAVOR and additional
+# Get mandatory PLATFORM and optional PLATFORM_FLAVOR and additional
 # variables
 OPTEE_OS_MAKE_OPTS += PLATFORM=$(call qstrip,$(BR2_TARGET_OPTEE_OS_PLATFORM))
 ifneq ($(call qstrip,$(BR2_TARGET_OPTEE_OS_PLATFORM_FLAVOR)),)

@@ -20,3 +20,11 @@ This should create `output/images/disk.img`. You can then copy the image to a at
 # Using
 Boot the board from the CF card and wait 'till the XDM login appears. Login as `root` using `test12` as pasword.
 Refer to the [BuildRoot](https://buildroot.org/downloads/manual/manual.html) manual to add/remove packages or make other changes.
+
+# History
+## 25. Oct 2024
+Update to BuildRoot 2024.8.1
+
+## 19. Dec 2023
+First version, based on BuildRoot 2023.11
+

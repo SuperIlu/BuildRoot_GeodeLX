@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5SCXML_VERSION = 631fd7bcc34802b7650c2b1dc73691463954d982
+QT5SCXML_VERSION = 6834b183966d08d9f061642ee7ea2d482cbbf073
 QT5SCXML_SITE = $(QT5_SITE)/qtscxml/-/archive/$(QT5SCXML_VERSION)
 QT5SCXML_SOURCE = qtscxml-$(QT5SCXML_VERSION).tar.bz2
 QT5SCXML_DEPENDENCIES = qt5declarative

@@ -17,14 +17,22 @@ ERLANG_CPE_ID_VENDOR = erlang
 ERLANG_CPE_ID_PRODUCT = erlang\/otp
 ERLANG_INSTALL_STAGING = YES
 
+define ERLANG_FIX_AUTOCONF_VERSION
+	$(SED) "s/USE_AUTOCONF_VERSION=.*/USE_AUTOCONF_VERSION=$(AUTOCONF_VERSION)/" $(@D)/otp_build
+endef
+
 # Patched erts/aclocal.m4
 define ERLANG_RUN_AUTOCONF
 	cd $(@D) && PATH=$(BR_PATH) ./otp_build update_configure --no-commit
 endef
 ERLANG_DEPENDENCIES += host-autoconf
-ERLANG_PRE_CONFIGURE_HOOKS += ERLANG_RUN_AUTOCONF
+ERLANG_PRE_CONFIGURE_HOOKS += \
+	ERLANG_FIX_AUTOCONF_VERSION \
+	ERLANG_RUN_AUTOCONF
 HOST_ERLANG_DEPENDENCIES += host-autoconf
-HOST_ERLANG_PRE_CONFIGURE_HOOKS += ERLANG_RUN_AUTOCONF
+HOST_ERLANG_PRE_CONFIGURE_HOOKS += \
+	ERLANG_FIX_AUTOCONF_VERSION \
+	ERLANG_RUN_AUTOCONF
 
 # Return the EIV (Erlang Interface Version, EI_VSN)
 # $(1): base directory, i.e. either $(HOST_DIR) or $(STAGING_DIR)/usr
@@ -40,7 +48,7 @@ ERLANG_CONF_ENV += erl_xcomp_sysroot=$(STAGING_DIR)
 ERLANG_CONF_OPTS = --without-javac
 
 # Force ERL_TOP to the downloaded source directory. This prevents
-# Erlang's configure script from inadvertantly using files from
+# Erlang's configure script from inadvertently using files from
 # a version of Erlang installed on the host.
 ERLANG_CONF_ENV += ERL_TOP=$(@D)
 HOST_ERLANG_CONF_ENV += ERL_TOP=$(@D)

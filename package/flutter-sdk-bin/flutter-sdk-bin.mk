@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-FLUTTER_SDK_BIN_VERSION = 3.13.9
+FLUTTER_SDK_BIN_VERSION = 3.24.0
 FLUTTER_SDK_BIN_SITE = https://storage.googleapis.com/flutter_infra_release/releases/stable/linux
 FLUTTER_SDK_BIN_SOURCE = flutter_linux_$(FLUTTER_SDK_BIN_VERSION)-stable.tar.xz
 FLUTTER_SDK_BIN_LICENSE = BSD-3-Clause
@@ -25,7 +25,7 @@ HOST_FLUTTER_SDK_BIN_ENV = \
 HOST_FLUTTER_SDK_BIN_CONF_OPTS = \
 	--clear-features \
 	--no-analytics \
-	--disable-telemetry \
+	--disable-analytics \
 	--enable-custom-devices \
 	--enable-linux-desktop \
 	--no-enable-android \
@@ -41,11 +41,8 @@ define HOST_FLUTTER_SDK_BIN_CONFIGURE_CMDS
 	$(HOST_FLUTTER_SDK_BIN_ENV) $(@D)/bin/dart --disable-analytics
 endef
 
-# Remove the cache, as we will run precache after setting up flutter and dart
-# with the new config options.
 define HOST_FLUTTER_SDK_BIN_BUILD_CMDS
 	mkdir -p $(HOST_FLUTTER_SDK_BIN_SDK)
-	rm -rf $(HOST_FLUTTER_SDK_BIN_SDK)/.pub-cache
 	cd $(@D) && \
 		$(HOST_FLUTTER_SDK_BIN_ENV) $(@D)/bin/flutter precache;
 endef
@@ -54,33 +51,41 @@ define HOST_FLUTTER_SDK_BIN_INSTALL_CMDS
 	cp -rpdT $(@D)/. $(HOST_FLUTTER_SDK_BIN_SDK)/
 endef
 
-ifeq ($(BR2_ENABLE_RUNTIME_DEBUG),y)
-HOST_FLUTTER_SDK_BIN_SDK_ROOT = \
-	$(HOST_FLUTTER_SDK_BIN_SDK_ENGINE)/common/flutter_patched_sdk
+ifeq ($(FLUTTER_ENGINE_RUNTIME_MODE_PROFILE),y)
+HOST_FLUTTER_SDK_BIN_PROFILE_FLAGS = --track-widget-creation
 HOST_FLUTTER_SDK_BIN_SDK_PRODUCT = false
+HOST_FLUTTER_SDK_BIN_SDK_ROOT = $(HOST_FLUTTER_SDK_BIN_SDK_ENGINE)/common/flutter_patched_sdk
+HOST_FLUTTER_SDK_BIN_SDK_VM_PROFILE = true
+else ifeq ($(BR2_ENABLE_RUNTIME_DEBUG),y)
+HOST_FLUTTER_SDK_BIN_DEBUG_FLAGS = --enable-asserts
+HOST_FLUTTER_SDK_BIN_SDK_PRODUCT = false
+HOST_FLUTTER_SDK_BIN_SDK_ROOT = $(HOST_FLUTTER_SDK_BIN_SDK_ENGINE)/common/flutter_patched_sdk
+HOST_FLUTTER_SDK_BIN_SDK_VM_PROFILE = false
 else
-HOST_FLUTTER_SDK_BIN_SDK_ROOT = \
-	$(HOST_FLUTTER_SDK_BIN_SDK_ENGINE)/common/flutter_patched_sdk_product
 HOST_FLUTTER_SDK_BIN_SDK_PRODUCT = true
+HOST_FLUTTER_SDK_BIN_SDK_ROOT = $(HOST_FLUTTER_SDK_BIN_SDK_ENGINE)/common/flutter_patched_sdk_product
+HOST_FLUTTER_SDK_BIN_SDK_VM_PROFILE = false
 endif
 
 # The Order matters.Taken from:
-# https://github.com/meta-flutter/meta-flutter/blob/kirkstone/classes/flutter-app.inc
+# https://github.com/meta-flutter/meta-flutter/blob/scarthgap/conf/include/common.inc
 HOST_FLUTTER_SDK_BIN_DART_ARGS = \
 	--verbose \
 	--disable-analytics \
-	--disable-dart-dev $(HOST_FLUTTER_SDK_BIN_SDK_ENGINE)/linux-x64/frontend_server.dart.snapshot \
+	--disable-dart-dev $(HOST_FLUTTER_SDK_BIN_SDK_ENGINE)/linux-x64/frontend_server_aot.dart.snapshot \
 	--sdk-root $(HOST_FLUTTER_SDK_BIN_SDK_ROOT) \
 	--target=flutter \
 	--no-print-incremental-dependencies \
-	-Ddart.vm.profile=false \
+	-Ddart.vm.profile=$(HOST_FLUTTER_SDK_BIN_SDK_VM_PROFILE) \
 	-Ddart.vm.product=$(HOST_FLUTTER_SDK_BIN_SDK_PRODUCT) \
+	$(HOST_FLUTTER_SDK_BIN_DEBUG_FLAGS) \
+	$(HOST_FLUTTER_SDK_BIN_PROFILE_FLAGS) \
 	--aot \
 	--tfa \
 	--target-os linux \
 	--packages .dart_tool/package_config.json \
 	--output-dill .dart_tool/flutter_build/*/app.dill \
-	--depfile .dart_tool/flutter_build/*/kernel_snapshot.d
+	--depfile .dart_tool/flutter_build/*/kernel_snapshot_program.d
 
 # Helper wrapper to run flutter when building flutter applications.
 HOST_FLUTTER_SDK_BIN_FLUTTER = \
@@ -90,10 +95,10 @@ HOST_FLUTTER_SDK_BIN_FLUTTER = \
 # Helper wrapper to run dart when building flutter applications.
 HOST_FLUTTER_SDK_BIN_DART_BIN = \
 	$(HOST_FLUTTER_SDK_BIN_ENV) \
-	$(HOST_FLUTTER_SDK_BIN_DART_SDK)/bin/dart \
+	$(HOST_FLUTTER_SDK_BIN_DART_SDK)/bin/dartaotruntime \
 	$(HOST_FLUTTER_SDK_BIN_DART_ARGS)
 
 $(eval $(host-generic-package))
 
 # For target packages to locate said pub-cache
-FLUTTER_SDK_BIN_PUB_CACHE = $(HOST_FLUTTER_SDK_BIN_SDK)/.pub-cache
+FLUTTER_SDK_BIN_PUB_CACHE = $(DL_DIR)/br-flutter-pub-cache

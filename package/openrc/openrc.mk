@@ -4,11 +4,11 @@
 #
 ################################################################################
 
-OPENRC_VERSION = 0.51
+OPENRC_VERSION = 0.52.1
 OPENRC_SITE = $(call github,OpenRC,openrc,$(OPENRC_VERSION))
 OPENRC_LICENSE = BSD-2-Clause
 OPENRC_LICENSE_FILES = LICENSE
-OPENRC_CPE_ID_VENDOR = openrc_project
+OPENRC_CPE_ID_VALID = YES
 
 OPENRC_DEPENDENCIES = ncurses
 
@@ -31,6 +31,10 @@ OPENRC_CONF_OPTS += -Dselinux=enabled
 OPENRC_DEPENDENCIES += libselinux
 else
 OPENRC_CONF_OPTS += -Dselinux=disabled
+endif
+
+ifeq ($(BR2_PACKAGE_LIBXCRYPT),y)
+OPENRC_DEPENDENCIES += libxcrypt
 endif
 
 ifeq ($(BR2_PACKAGE_LINUX_PAM),y)

@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5WAYLAND_VERSION = 8faf74a7966b520f0ac3eb4d88235f8ec63b31b8
+QT5WAYLAND_VERSION = 11e099c6b7fbec0e198bffaf8016676ef430cfba
 QT5WAYLAND_SITE = $(QT5_SITE)/qtwayland/-/archive/$(QT5WAYLAND_VERSION)
 QT5WAYLAND_SOURCE = qtwayland-$(QT5WAYLAND_VERSION).tar.bz2
 QT5WAYLAND_DEPENDENCIES = wayland

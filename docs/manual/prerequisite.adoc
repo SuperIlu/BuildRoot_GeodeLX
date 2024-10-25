@@ -69,16 +69,16 @@ development packages typically have a _-dev_ or _-devel_ suffix.
 In the official tree, most of the package sources are retrieved using
 +wget+ from _ftp_, _http_ or _https_ locations. A few packages are only
 available through a version control system. Moreover, Buildroot is
-capable of downloading sources via other tools, like +rsync+ or +scp+
+capable of downloading sources via other tools, like +git+ or +scp+
 (refer to xref:download-infra[] for more details). If you enable
 packages using any of these methods, you will need to install the
 corresponding tool on the host system:
 +
 ** +bazaar+
+** +curl+
 ** +cvs+
 ** +git+
 ** +mercurial+
-** +rsync+
 ** +scp+
 ** +sftp+
 ** +subversion+
@@ -97,3 +97,6 @@ corresponding tool on the host system:
 * Graph generation tools:
 ** +graphviz+ to use 'graph-depends' and '<pkg>-graph-depends'
 ** +python-matplotlib+ to use 'graph-build'
+
+* Package statistics tools ('pkg-stats'):
+** +python-aiohttp+

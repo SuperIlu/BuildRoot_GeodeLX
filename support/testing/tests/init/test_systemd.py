@@ -198,7 +198,7 @@ class TestInitSystemSystemdRwFull(InitSystemSystemdBase):
 
 
 # The following tests are all about read-only rootfs, and exercise either
-# using an un-populated factory for /var, or an overlaysfs ontop of a
+# using an un-populated factory for /var, or an overlaysfs on top of a
 # pre-populated /var. They all specialise the TestInitSystemSystemdRo*
 # test cases above.
 
@@ -286,7 +286,7 @@ class InitSystemSystemdBaseOverlayfs():
         BR2_ROOTFS_OVERLAY="{}"
         BR2_LINUX_KERNEL=y
         BR2_LINUX_KERNEL_CUSTOM_VERSION=y
-        BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="5.10.7"
+        BR2_LINUX_KERNEL_CUSTOM_VERSION_VALUE="5.10.202"
         BR2_LINUX_KERNEL_DEFCONFIG="vexpress"
         BR2_LINUX_KERNEL_CONFIG_FRAGMENT_FILES="{}"
         BR2_LINUX_KERNEL_DTS_SUPPORT=y

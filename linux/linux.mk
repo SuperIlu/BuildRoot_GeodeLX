@@ -24,6 +24,9 @@ LINUX_SOURCE = $(notdir $(LINUX_TARBALL))
 else ifeq ($(BR2_LINUX_KERNEL_CUSTOM_GIT),y)
 LINUX_SITE = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_REPO_URL))
 LINUX_SITE_METHOD = git
+ifeq ($(BR2_LINUX_KERNEL_CUSTOM_REPO_GIT_SUBMODULES),y)
+LINUX_GIT_SUBMODULES = YES
+endif
 else ifeq ($(BR2_LINUX_KERNEL_CUSTOM_HG),y)
 LINUX_SITE = $(call qstrip,$(BR2_LINUX_KERNEL_CUSTOM_REPO_URL))
 LINUX_SITE_METHOD = hg
@@ -83,7 +86,7 @@ LINUX_DEPENDENCIES += \
 	$(if $(BR2_PACKAGE_FIRMWARE_IMX),firmware-imx) \
 	$(if $(BR2_PACKAGE_WIRELESS_REGDB),wireless-regdb)
 
-# Starting with 4.16, the generated kconfig paser code is no longer
+# Starting with 4.16, the generated kconfig parser code is no longer
 # shipped with the kernel sources, so we need flex and bison, but
 # only if the host does not have them.
 LINUX_KCONFIG_DEPENDENCIES = \
@@ -133,6 +136,10 @@ define LINUX_FIXUP_CONFIG_PAHOLE_CHECK
 		exit 1; \
 	fi
 endef
+endif
+
+ifeq ($(BR2_LINUX_KERNEL_NEEDS_HOST_PYTHON3),y)
+LINUX_DEPENDENCIES += $(BR2_PYTHON3_HOST_DEPENDENCY)
 endif
 
 # If host-uboot-tools is selected by the user, assume it is needed to
@@ -411,6 +418,10 @@ define LINUX_KCONFIG_FIXUP_CMDS
 		$(call KCONFIG_ENABLE_OPT,CONFIG_ARM64_4K_PAGES)
 		$(call KCONFIG_DISABLE_OPT,CONFIG_ARM64_16K_PAGES)
 		$(call KCONFIG_DISABLE_OPT,CONFIG_ARM64_64K_PAGES))
+	$(if $(BR2_ARM64_PAGE_SIZE_16K),
+		$(call KCONFIG_DISABLE_OPT,CONFIG_ARM64_4K_PAGES)
+		$(call KCONFIG_ENABLE_OPT,CONFIG_ARM64_16K_PAGES)
+		$(call KCONFIG_DISABLE_OPT,CONFIG_ARM64_64K_PAGES))
 	$(if $(BR2_ARM64_PAGE_SIZE_64K),
 		$(call KCONFIG_DISABLE_OPT,CONFIG_ARM64_4K_PAGES)
 		$(call KCONFIG_DISABLE_OPT,CONFIG_ARM64_16K_PAGES)
@@ -432,6 +443,7 @@ define LINUX_KCONFIG_FIXUP_CMDS
 		$(call KCONFIG_ENABLE_OPT,CONFIG_LOGO)
 		$(call KCONFIG_ENABLE_OPT,CONFIG_LOGO_LINUX_CLUT224))
 	$(call KCONFIG_DISABLE_OPT,CONFIG_GCC_PLUGINS)
+	$(call KCONFIG_DISABLE_OPT,CONFIG_WERROR)
 	$(PACKAGES_LINUX_CONFIG_FIXUPS)
 endef
 

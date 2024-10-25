@@ -4,7 +4,7 @@
 #
 ################################################################################
 
-QT5SVG_VERSION = a9752b00a03438de8e5b080073816e12409404b7
+QT5SVG_VERSION = 690128b2b8fb6d6fbdc43b2b2633f0f1de3f0638
 QT5SVG_SITE = $(QT5_SITE)/qtsvg/-/archive/$(QT5SVG_VERSION)
 QT5SVG_SOURCE = qtsvg-$(QT5SVG_VERSION).tar.bz2
 QT5SVG_INSTALL_STAGING = YES
