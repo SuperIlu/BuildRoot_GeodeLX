@@ -3,6 +3,7 @@ This is a working configuration for the ThinClient board TR2350 Rev 1.4 that can
 
 On Board HW:
 - Geode LX800
+- 128MiB RAM
 - CS5536 Geode peripheral
 - Winbond 83627HG-AW Winbond LPC I/O Controller
 - RMC ALC203 Two-Channel Ac'97 2.3 Audio Codec
